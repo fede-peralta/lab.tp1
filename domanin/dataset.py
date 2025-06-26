@@ -1,5 +1,7 @@
 '''clase base. '''
 from abc import ABC, abstractmethod
+import pandas as pd
+
 
 # definimos la estructura
 class Dataset(ABC):
@@ -34,25 +36,40 @@ class Dataset(ABC):
         
         if self.datos.duplicated().sum() > 0:
             print("datos duplicado")
+        
+        if self.datos.empty:
+            raise ValueError("DF vacio ")
             
         return True
 
     def transformar_datos(self):
-        if self.datos is not None:
-            "estandarizacon de columanas. Mismo tamano de texto"
+        try:
             
-            self.__datos.columns = self.datos.columns.str.lower().str.replace(" " , "_")
+            if self.datos is not None:
+            # estandarizacon de columanas. Mismo tamano de texto
             
-            "eliminamos datos duplicados"
-            self.__datos = self.datos.drop_duplicates()
+                self.__datos.columns = self.datos.columns.str.lower().str.replace(" " , "_")
             
-            "convertir objeto a texto plano"
-            for col in self.datos.select_dtypes(include="object").columns:
-                self.__datos[col] = self.datos[col].astype(str).str.strip()
-            print("Modificacion exitosa")
+            #eliminamos datos duplicados
+                self.__datos = self.datos.drop_duplicates()
             
-        else:
-            print('No existe datos para su modicicacion/')
+            #convertir objeto a texto plano"
+                for col in self.datos.select_dtypes(include="object").columns:
+                    self.__datos[col] = self.datos[col].astype(str).str.strip()
+                print("Modificacion exitosa")
+            
+            else:
+                print('No existe datos para su modicicacion/')
+                
+        except AttributeError as e:
+            print(f"Error: el objeto 'datos' no tiene el formato. {e}")
+            
+        except TypeError as e:
+            print(f"Error de tipo: probablemente hay un dato mal formateado. {e}")
+        
+        except Exception as e:
+            print(f"Ocurrio un error inesperado: {e}")
+            
                 
             
             
